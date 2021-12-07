@@ -1,0 +1,29 @@
+import main
+import time
+from selenium import webdriver
+driver = webdriver.Chrome(executable_path= "D:\Infogistic\Drivers\chromedriver.exe")
+driver.get("http://192.168.10.37/")
+
+driver.maximize_window()
+driver.implicitly_wait(10)
+path = "D:\Infogistic\Book1.xlsx"
+rows = main.rcount(path, 'sheet')
+for r in range(2,rows+1):
+    username = main.readdata(path, "sheet", r, 1)
+    password = main.readdata(path, 'sheet', r, 2)
+
+    driver.find_element_by_id("_58_login").send_keys(username)
+    driver.find_element_by_id("_58_password").send_keys(password)
+    driver.find_element_by_xpath("//*[@id='_58_fm']/fieldset/div[3]/div[1]/button").click()
+    time.sleep(5)
+    if driver.title == "Detailed Invoicing":
+        print("test is passed")
+        main.writedat(path, "Sheet", r, 3, "Passed")
+        driver.find_element_by_id("_userInfo_WAR_CloudClinikportlet_:form:userImage").click()
+        driver.find_element_by_id("_userInfo_WAR_CloudClinikportlet_:form:j_idt25").click()
+        driver.refresh()
+    else:
+        driver.get("http://192.168.10.37/")
+        print("Failed")
+        main.writedat(path, "Sheet", r, 3, "Failed")
+        time.sleep(4)
